@@ -3,7 +3,7 @@ import { Button, Collapse, InputAdornment, TextField } from "@mui/material";
 import code from "./code";
 import "./styles.css";
 
-const DEFAULT_DOMAIN = "fruitionsite.com";
+const DEFAULT_DOMAIN = "notionhub.com";
 const DEFAULT_NOTION_URL =
   "https://stephenou.notion.site/771ef38657244c27b9389734a9cbff44";
 
@@ -119,7 +119,7 @@ export default function App() {
       <TextField
         fullWidth
         helperText={myDomainHelperText}
-        label="Your Domain (e.g. example.org)"
+        label="请输入域名 (示例notionhub.app)"
         onChange={handleMyDomain}
         margin="normal"
         placeholder={DEFAULT_DOMAIN}
@@ -129,7 +129,7 @@ export default function App() {
       <TextField
         fullWidth
         helperText={notionUrlHelperText}
-        label={`Notion URL for ${domain}`}
+        label={`输入${domain}对应的 Notion URL `}
         margin="normal"
         onChange={handleNotionUrl}
         placeholder={DEFAULT_NOTION_URL}
@@ -241,7 +241,7 @@ export default function App() {
           disableElevation
           onClick={copy}
         >
-          {copied ? "Copied!" : "Copy the code"}
+          {copied ? "复制成功!" : "复制代码"}
         </Button>
       </section>
       {noError ? (

@@ -136,6 +136,15 @@ ${slugs
       response = new Response(response.body, response);
       response.headers.set('Access-Control-Allow-Origin', '*');
       return response;
+    } else if (url.pathname.endsWith(".js")){
+      response = await fetch(url.toString());
+      let body = await response.text();
+      response = new Response(
+        body,
+        response
+      );
+      response.headers.set("Content-Type", "application/x-javascript");
+      return response;
     } else if (slugs.indexOf(url.pathname.slice(1)) > -1) {
       const pageId = SLUG_TO_PAGE[url.pathname.slice(1)];
       return Response.redirect('https://' + MY_DOMAIN + '/' + pageId, 301);
@@ -194,16 +203,32 @@ ${slugs
       div.notion-topbar > div > div:nth-child(4) { display: none !important; }
       div.notion-topbar > div > div:nth-child(5) { display: none !important; }
       div.notion-topbar > div > div:nth-child(6) { display: none !important; }
+      div.notion-topbar > div > div:nth-child(7) { display: none !important; }
       div.notion-topbar-mobile > div:nth-child(3) { display: none !important; }
       div.notion-topbar-mobile > div:nth-child(4) { display: none !important; }
       div.notion-topbar > div > div:nth-child(1n).toggle-mode { display: block !important; }
       div.notion-topbar-mobile > div:nth-child(1n).toggle-mode { display: block !important; }
-      </style>\`, {
+      </style>
+      <!-- Google Tag Manager -->
+      <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+      new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+      j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+      'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+      })(window,document,'script','dataLayer','GTM-KWRKSLG');</script>
+      <!-- End Google Tag Manager -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-KMYVHL4B8D"></script>
+      <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+
+          gtag('config', 'G-KMYVHL4B8D');
+      </script>\`, {
         html: true
       })
     }
   }
-  
+
   class BodyRewriter {
     constructor(SLUG_TO_PAGE) {
       this.SLUG_TO_PAGE = SLUG_TO_PAGE;
@@ -212,6 +237,7 @@ ${slugs
       element.append(\`<div style="display:none">Powered by <a href="http://fruitionsite.com">Fruition</a></div>
       <script>
       window.CONFIG.domainBaseUrl = 'https://\${MY_DOMAIN}';
+      localStorage.__console = true;
       const SLUG_TO_PAGE = \${JSON.stringify(this.SLUG_TO_PAGE)};
       const PAGE_TO_SLUG = {};
       const slugs = [];
@@ -236,17 +262,28 @@ ${slugs
           history.replaceState(history.state, '', '/' + slug);
         }
       }
+      function enableConsoleEffectAndSetMode(mode) {
+        if (__console && !__console.isEnabled) {
+          __console.enable()
+          window.location.reload()
+        } else {
+          __console.environment.ThemeStore.setState({ mode: mode })
+        }
+      }
       function onDark() {
-        el.innerHTML = '<div title="Change to Light Mode" style="margin-left: auto; margin-right: 14px; min-width: 0px;"><div role="button" tabindex="0" style="user-select: none; transition: background 120ms ease-in 0s; cursor: pointer; border-radius: 44px;"><div style="display: flex; flex-shrink: 0; height: 14px; width: 26px; border-radius: 44px; padding: 2px; box-sizing: content-box; background: rgb(46, 170, 220); transition: background 200ms ease 0s, box-shadow 200ms ease 0s;"><div style="width: 14px; height: 14px; border-radius: 44px; background: white; transition: transform 200ms ease-out 0s, background 200ms ease-out 0s; transform: translateX(12px) translateY(0px);"></div></div></div></div>';
-        document.body.classList.add('dark');
-        __console.environment.ThemeStore.setState({ mode: 'dark' });
-      };
+        el.innerHTML =
+          '<div title="Change to Light Mode" style="margin-left: auto; margin-right: 14px; min-width: 0px;"><div role="button" tabindex="0" style="user-select: none; transition: background 120ms ease-in 0s; cursor: pointer; border-radius: 44px;"><div style="display: flex; flex-shrink: 0; height: 14px; width: 26px; border-radius: 44px; padding: 2px; box-sizing: content-box; background: rgb(46, 170, 220); transition: background 200ms ease 0s, box-shadow 200ms ease 0s;"><div style="width: 14px; height: 14px; border-radius: 44px; background: white; transition: transform 200ms ease-out 0s, background 200ms ease-out 0s; transform: translateX(12px) translateY(0px);"></div></div></div></div>'
+        document.body.classList.add('dark')
+        enableConsoleEffectAndSetMode('dark')
+      }
       function onLight() {
-        el.innerHTML = '<div title="Change to Dark Mode" style="margin-left: auto; margin-right: 14px; min-width: 0px;"><div role="button" tabindex="0" style="user-select: none; transition: background 120ms ease-in 0s; cursor: pointer; border-radius: 44px;"><div style="display: flex; flex-shrink: 0; height: 14px; width: 26px; border-radius: 44px; padding: 2px; box-sizing: content-box; background: rgba(135, 131, 120, 0.3); transition: background 200ms ease 0s, box-shadow 200ms ease 0s;"><div style="width: 14px; height: 14px; border-radius: 44px; background: white; transition: transform 200ms ease-out 0s, background 200ms ease-out 0s; transform: translateX(0px) translateY(0px);"></div></div></div></div>';
-        document.body.classList.remove('dark');
-        __console.environment.ThemeStore.setState({ mode: 'light' });
+        el.innerHTML =
+          '<div title="Change to Dark Mode" style="margin-left: auto; margin-right: 14px; min-width: 0px;"><div role="button" tabindex="0" style="user-select: none; transition: background 120ms ease-in 0s; cursor: pointer; border-radius: 44px;"><div style="display: flex; flex-shrink: 0; height: 14px; width: 26px; border-radius: 44px; padding: 2px; box-sizing: content-box; background: rgba(135, 131, 120, 0.3); transition: background 200ms ease 0s, box-shadow 200ms ease 0s;"><div style="width: 14px; height: 14px; border-radius: 44px; background: white; transition: transform 200ms ease-out 0s, background 200ms ease-out 0s; transform: translateX(0px) translateY(0px);"></div></div></div></div>'
+        document.body.classList.remove('dark')
+        enableConsoleEffectAndSetMode('light')
       }
       function toggle() {
+        if (!__console.isEnabled) __console.enable();
         if (document.body.classList.contains('dark')) {
           onLight();
         } else {
